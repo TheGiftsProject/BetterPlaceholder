@@ -1,0 +1,59 @@
+/* line 4, ../../../app/stylesheets/plugins/placeholder.scss */
+.input-wrapper {
+  outline: 0;
+  position: relative;
+}
+/* line 7, ../../../app/stylesheets/plugins/placeholder.scss */
+.input-wrapper .input-placeholder {
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+  vertical-align: middle;
+  position: absolute;
+  cursor: pointer;
+  z-index: 2;
+  color: #7f7f7f;
+}
+/* line 14, ../../../app/stylesheets/plugins/placeholder.scss */
+.input-wrapper .input-placeholder.focus {
+  -moz-transition-property: all;
+  -webkit-transition-property: all;
+  -o-transition-property: all;
+  transition-property: all;
+  -moz-transition-duration: 300ms;
+  -webkit-transition-duration: 300ms;
+  -o-transition-duration: 300ms;
+  transition-duration: 300ms;
+  -moz-transition-timing-function: ease-in-out;
+  -webkit-transition-timing-function: ease-in-out;
+  -o-transition-timing-function: ease-in-out;
+  transition-timing-function: ease-in-out;
+  color: #b2b2b2;
+  cursor: text;
+}
+/* line 19, ../../../app/stylesheets/plugins/placeholder.scss */
+.input-wrapper .input-placeholder.with_value {
+  -moz-transition-property: all;
+  -webkit-transition-property: all;
+  -o-transition-property: all;
+  transition-property: all;
+  -moz-transition-duration: 100ms;
+  -webkit-transition-duration: 100ms;
+  -o-transition-duration: 100ms;
+  transition-duration: 100ms;
+  -moz-transition-timing-function: ease-in-out;
+  -webkit-transition-timing-function: ease-in-out;
+  -o-transition-timing-function: ease-in-out;
+  transition-timing-function: ease-in-out;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+  opacity: 0;
+  z-index: 0;
+  cursor: text;
+}
+/* line 26, ../../../app/stylesheets/plugins/placeholder.scss */
+.input-wrapper input {
+  z-index: 1;
+}
