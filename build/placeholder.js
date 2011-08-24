@@ -54,6 +54,12 @@
         return this.show();
       }
     };
+    Placeholder.prototype.resize = function() {
+      return this.placeholder.css({
+        width: this.input.css("width"),
+        height: this.input.css("height")
+      });
+    };
     Placeholder.prototype.keyup = function() {
       return this.focus();
     };
@@ -161,6 +167,8 @@
         return placeholder.keyup();
       }, this)).focus(__bind(function() {
         return placeholder.focus();
+      }, this)).resize(__bind(function() {
+        return placeholder.resize();
       }, this));
     });
   };

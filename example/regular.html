@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Regular placeholder tests</title>
+    <link rel="stylesheet" href="../src/css/placeholder.css" type="text/css"/>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+    <script src="../build/placeholder.js"></script>
+    <script>
+    $(function(){
+    	$("input,textarea").placeholder();
+    })
+    </script>
+</head>
+<body>
+<h1>Regular placeholder tests</h1>
+<input type="text" name="name" placeholder="e.g. John Doe" value="initial value">
+<input type="email" name="email" placeholder="e.g. address@example.ext">
+<input type="url" name="url" placeholder="e.g. http://mathiasbynens.be/">
+<input type="tel" name="tel" placeholder="e.g. +32 472 77 69 88">
+<input type="password" name="password" placeholder="e.g. h4x0rpr00fz">
+<input type="search" name="search" placeholder="Search this site…">
+<textarea name="message" placeholder="Some Long Text! Some Long Text! Some Long Text! Some Long Text! "></textarea>
+
+</body>
+</html>

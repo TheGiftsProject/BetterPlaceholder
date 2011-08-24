@@ -131,4 +131,8 @@ $.fn.placeholder = (options) ->
     return input.data("placeholderInstance") if input.data("placeholder")?.length #prevent double creation
     placeholder = new Placeholder(input)
     input.data("placeholderInstance", placeholder)
-    input.keyup(=>placeholder.keyup()).blur(=>placeholder.blur()).change(=>placeholder.keyup()).focus(=>placeholder.focus())
+    input
+      .keyup(=>placeholder.keyup())
+      .blur(=>placeholder.blur())
+      .change(=>placeholder.keyup())
+      .focus(=>placeholder.focus())
