@@ -51,6 +51,7 @@ class Placeholder
   blur: ->
     @placeholder.removeClass(@options.placeholderFocusCss)
     @show() unless @input.val().length
+    
   setNewContent: (content)->
     @placeholder.html(content)
     @input.data("placeholder", content)
@@ -68,15 +69,15 @@ class Placeholder
   _createPlaceholder: ->
     inputId = @input.attr("id") ? @_getRandomId()
     @input.attr("id",inputId)
-    measurements = @_getMeasurements()
+    @_calculateMeasurements()
     @placeholder =
     $("<label class='#{@options.placeholderCss}' for='#{inputId}'>#{@input.attr("placeholder")}</label>")
     .css(
       top: @_topOffset(),
       left: @_leftOffset(),
-      "line-height": measurements.height,
-      width: measurements.width,
-      height: measurements.height)
+      "line-height": @measurements.height,
+      width: @measurements.width,
+      height: @measurements.height)
     .click(->@focus())
     .insertBefore(@input)
     @_removeHtmlPlaceholder()
@@ -84,19 +85,29 @@ class Placeholder
   ###
   @private
   ###
-  _getMeasurements: ->
+  _calculateMeasurements: ->
     @clone = @input.clone().insertBefore(@input).css(
       top: -99999
       left: -99999
       position: "absolute"
     ).show()
 
-    result = {
+    @measurements or= {
       width: @clone.css("width")
       height: @clone.css("height")
+      left: {
+        padding:parseInt(@clone.css("padding-left").replace("px",''))
+        border:parseInt(@clone.css("border-left-width").replace("px",''))
+        margin:parseInt(@clone.css("margin-left").replace("px",''))
+      }
+      top: {
+        padding:parseInt(@clone.css("padding-top").replace("px",''))
+        border:parseInt(@clone.css("border-top-width").replace("px",''))
+        margin:parseInt(@clone.css("margin-top").replace("px",''))
+      }
     }
     @clone.remove()
-    result
+    @measurements
     
   ###
   @private
@@ -115,18 +126,14 @@ class Placeholder
   @private
   ###
   _leftOffset: ->
-    @input.position().left+
-    parseInt(@input.css("padding-left").replace("px",''))+
-    parseInt(@input.css("border-left-width").replace("px",''))+
-    parseInt(@input.css("margin-left").replace("px",''))+2
+    left = @measurements.left
+    left.padding + left.border + left.margin + 2
   ###
   @private
   ###
   _topOffset: ->
-    @input.position().top+
-    parseInt(@input.css("padding-top").replace("px",''))+
-    parseInt(@input.css("border-top-width").replace("px",''))+
-    parseInt(@input.css("margin-top").replace("px",''))
+    top = @measurements.top
+    top.padding + top.border + top.margin
 
   ###
   @private
@@ -154,7 +161,7 @@ $.fn.placeholder = (options) ->
       .change(=>placeholder.keyup())
       .focus(=>placeholder.focus())
 
-  newContent = @[1]
+  newContent = options
   input = @[0]
   $input = @
   @.each ->

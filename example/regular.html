@@ -9,6 +9,10 @@
     <script>
     $(function(){
     	$("input,textarea").placeholder();
+        $("#initiallyHidden").show();
+        setTimeout(function() {
+            $("#setNewContent").placeholder("new content");
+        },5000);
     })
     </script>
 </head>
@@ -21,6 +25,7 @@
 <input type="password" name="password" placeholder="e.g. h4x0rpr00fz">
 <input type="search" name="search" placeholder="Search this site…">
 <textarea name="message" placeholder="Some Long Text! Some Long Text! Some Long Text! Some Long Text! "></textarea>
-
+<input type="text" id="initiallyHidden" name="hidden" placeholder="hidden test" style="display:none;"/>
+<input type="text" id="setNewContent" placeholder="initial content"/>
 </body>
 </html>

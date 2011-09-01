@@ -54,12 +54,6 @@
         return this.show();
       }
     };
-    Placeholder.prototype.resize = function() {
-      return this.placeholder.css({
-        width: this.input.css("width"),
-        height: this.input.css("height")
-      });
-    };
     Placeholder.prototype.keyup = function() {
       return this.focus();
     };
@@ -68,6 +62,10 @@
       if (!this.input.val().length) {
         return this.show();
       }
+    };
+    Placeholder.prototype.setNewContent = function(content) {
+      this.placeholder.html(content);
+      return this.input.data("placeholder", content);
     };
     /*
       @private
@@ -83,16 +81,43 @@
       var inputId, _ref;
       inputId = (_ref = this.input.attr("id")) != null ? _ref : this._getRandomId();
       this.input.attr("id", inputId);
+      this._calculateMeasurements();
       this.placeholder = $("<label class='" + this.options.placeholderCss + "' for='" + inputId + "'>" + (this.input.attr("placeholder")) + "</label>").css({
         top: this._topOffset(),
         left: this._leftOffset(),
-        "line-height": this.input.css("height"),
-        width: this.input.css("width"),
-        height: this.input.css("height")
+        "line-height": this.measurements.height,
+        width: this.measurements.width,
+        height: this.measurements.height
       }).click(function() {
         return this.focus();
       }).insertBefore(this.input);
       return this._removeHtmlPlaceholder();
+    };
+    /*
+      @private
+      */
+    Placeholder.prototype._calculateMeasurements = function() {
+      this.clone = this.input.clone().insertBefore(this.input).css({
+        top: -99999,
+        left: -99999,
+        position: "absolute"
+      }).show();
+      this.measurements || (this.measurements = {
+        width: this.clone.css("width"),
+        height: this.clone.css("height"),
+        left: {
+          padding: parseInt(this.clone.css("padding-left").replace("px", '')),
+          border: parseInt(this.clone.css("border-left-width").replace("px", '')),
+          margin: parseInt(this.clone.css("margin-left").replace("px", ''))
+        },
+        top: {
+          padding: parseInt(this.clone.css("padding-top").replace("px", '')),
+          border: parseInt(this.clone.css("border-top-width").replace("px", '')),
+          margin: parseInt(this.clone.css("margin-top").replace("px", ''))
+        }
+      });
+      this.clone.remove();
+      return this.measurements;
     };
     /*
       @private
@@ -116,13 +141,17 @@
       @private
       */
     Placeholder.prototype._leftOffset = function() {
-      return this.input.position().left + parseInt(this.input.css("padding-left").replace("px", '')) + parseInt(this.input.css("border-left-width").replace("px", '')) + parseInt(this.input.css("margin-left").replace("px", '')) + 2;
+      var left;
+      left = this.measurements.left;
+      return left.padding + left.border + left.margin + 2;
     };
     /*
       @private
       */
     Placeholder.prototype._topOffset = function() {
-      return this.input.position().top + parseInt(this.input.css("padding-top").replace("px", '')) + parseInt(this.input.css("border-top-width").replace("px", '')) + parseInt(this.input.css("margin-top").replace("px", ''));
+      var top;
+      top = this.measurements.top;
+      return top.padding + top.border + top.margin;
     };
     /*
       @private
@@ -148,15 +177,9 @@
     return Placeholder;
   })();
   $.fn.placeholder = function(options) {
-    var $input, input;
-    input = this[0];
-    $input = this;
-    return this.each(function() {
-      var placeholder, _ref;
-      input = $(this);
-      if ((_ref = input.data("placeholder")) != null ? _ref.length : void 0) {
-        return input.data("placeholderInstance");
-      }
+    var $input, initPlaceholder, input, newContent;
+    initPlaceholder = function(input) {
+      var placeholder;
       placeholder = new Placeholder(input);
       input.data("placeholderInstance", placeholder);
       return input.keyup(__bind(function() {
@@ -167,9 +190,22 @@
         return placeholder.keyup();
       }, this)).focus(__bind(function() {
         return placeholder.focus();
-      }, this)).resize(__bind(function() {
-        return placeholder.resize();
       }, this));
+    };
+    newContent = options;
+    input = this[0];
+    $input = this;
+    return this.each(function() {
+      var _ref;
+      input = $(this);
+      if (newContent) {
+        return input.data("placeholderInstance").setNewContent(newContent);
+      } else {
+        if ((_ref = input.data("placeholderInstance")) != null ? _ref.length : void 0) {
+          return input.data("placeholderInstance");
+        }
+        return initPlaceholder(input);
+      }
     });
   };
 }).call(this);
