@@ -20,6 +20,7 @@
 ###
 class Placeholder
   constructor: (@input, @options) ->
+
     defaults = {
       placeholderCss:         'input-placeholder',
       placeholderFocusCss:    'focus',
@@ -50,6 +51,9 @@ class Placeholder
   blur: ->
     @placeholder.removeClass(@options.placeholderFocusCss)
     @show() unless @input.val().length
+  setNewContent: (content)->
+    @placeholder.html(content)
+    @input.data("placeholder", content)
 
 # ============================================================PRIVATES==================================================
   ###
@@ -64,19 +68,36 @@ class Placeholder
   _createPlaceholder: ->
     inputId = @input.attr("id") ? @_getRandomId()
     @input.attr("id",inputId)
-    
+    measurements = @_getMeasurements()
     @placeholder =
     $("<label class='#{@options.placeholderCss}' for='#{inputId}'>#{@input.attr("placeholder")}</label>")
     .css(
       top: @_topOffset(),
       left: @_leftOffset(),
-      "line-height": @input.css("height"),
-      width: @input.css("width"),
-      height: @input.css("height"))
+      "line-height": measurements.height,
+      width: measurements.width,
+      height: measurements.height)
     .click(->@focus())
     .insertBefore(@input)
     @_removeHtmlPlaceholder()
 
+  ###
+  @private
+  ###
+  _getMeasurements: ->
+    @clone = @input.clone().insertBefore(@input).css(
+      top: -99999
+      left: -99999
+      position: "absolute"
+    ).show()
+
+    result = {
+      width: @clone.css("width")
+      height: @clone.css("height")
+    }
+    @clone.remove()
+    result
+    
   ###
   @private
   ###
@@ -124,11 +145,7 @@ class Placeholder
 
 
 $.fn.placeholder = (options) ->
-  input = @[0]
-  $input = @
-  @.each ->
-    input = $(@)
-    return input.data("placeholderInstance") if input.data("placeholder")?.length #prevent double creation
+  initPlaceholder = (input)->
     placeholder = new Placeholder(input)
     input.data("placeholderInstance", placeholder)
     input
@@ -136,3 +153,14 @@ $.fn.placeholder = (options) ->
       .blur(=>placeholder.blur())
       .change(=>placeholder.keyup())
       .focus(=>placeholder.focus())
+
+  newContent = @[1]
+  input = @[0]
+  $input = @
+  @.each ->
+    input = $(@)
+    if (newContent)
+      input.data("placeholderInstance").setNewContent(newContent)
+    else
+      return input.data("placeholderInstance") if input.data("placeholderInstance")?.length #prevent double creation
+      initPlaceholder(input)
