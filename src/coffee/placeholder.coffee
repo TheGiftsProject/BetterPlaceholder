@@ -78,7 +78,10 @@ class Placeholder
       "line-height": @measurements.height,
       width: @measurements.width,
       height: @measurements.height)
-    .click(->@focus())
+    .click(=>
+      @focus()
+      $(@input).focus()
+      )
     .insertBefore(@input)
     @_removeHtmlPlaceholder()
 

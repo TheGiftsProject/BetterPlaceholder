@@ -78,7 +78,6 @@
       @private
       */
     Placeholder.prototype._createPlaceholder = function() {
-      var that = this;
       var inputId, _ref;
       inputId = (_ref = this.input.attr("id")) != null ? _ref : this._getRandomId();
       this.input.attr("id", inputId);
@@ -89,11 +88,10 @@
         "line-height": this.measurements.height,
         width: this.measurements.width,
         height: this.measurements.height
-      }).click(function() {
-        that.focus();
-        $(that.input).focus();
-        return false;
-      }).insertBefore(this.input);
+      }).click(__bind(function() {
+        this.focus();
+        return $(this.input).focus();
+      }, this)).insertBefore(this.input);
       return this._removeHtmlPlaceholder();
     };
     /*
