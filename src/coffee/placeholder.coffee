@@ -75,7 +75,7 @@ class Placeholder
     .css(
       top: @_topOffset(),
       left: @_leftOffset(),
-      "line-height": @measurements.height,
+      "line-height": @measurements.height + 'px',
       width: @measurements.width,
       height: @measurements.height)
     .click(=>
