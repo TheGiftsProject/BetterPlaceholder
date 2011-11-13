@@ -99,14 +99,14 @@ class Placeholder
       width: @clone.css("width")
       height: @clone.css("height")
       left: {
-        padding:parseInt(@clone.css("padding-left").replace("px",''))
-        border:parseInt(@clone.css("border-left-width").replace("px",''))
-        margin:parseInt(@clone.css("margin-left").replace("px",''))
+        padding:parseInt(@clone.css("padding-left").replace("px",''), 10)
+        border:parseInt(@clone.css("border-left-width").replace("px",''), 10)
+        margin:parseInt(@clone.css("margin-left").replace("px",''), 10)
       }
       top: {
-        padding:parseInt(@clone.css("padding-top").replace("px",''))
-        border:parseInt(@clone.css("border-top-width").replace("px",''))
-        margin:parseInt(@clone.css("margin-top").replace("px",''))
+        padding:parseInt(@clone.css("padding-top").replace("px",''), 10)
+        border:parseInt(@clone.css("border-top-width").replace("px",''), 10)
+        margin:parseInt(@clone.css("margin-top").replace("px",''), 10)
       }
     }
     @clone.remove()
