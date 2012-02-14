@@ -28,10 +28,17 @@ class Placeholder
       wrapperCss:             'input-wrapper',
     }
     @options = $.extend {}, defaults, @options
-    @_wrap()
+    # binding events
+    @input
+      .keyup(=>@checkContent())
+      .blur(=>@blur())
+      .change(=>@checkContent())
+      .focus(=>@focus())
+
+    @input.wrapAll($("<div class='#{@options.wrapperCss}'/>"))
     @_createPlaceholder()
     @_overrideDefVal()
-    @hide() if @input.val().length
+    @checkContent()
 
   hide: ->
     @placeholder.addClass(@options.placeholderHiddenCss)
@@ -41,52 +48,47 @@ class Placeholder
 
   focus: ->
     @placeholder.addClass(@options.placeholderFocusCss)
+    @checkContent()
+
+  checkContent: ->
     if @input.val().length
       @hide()
     else
       @show()
 
-  keyup: -> @focus()
-    
   blur: ->
     @placeholder.removeClass(@options.placeholderFocusCss)
-    @show() unless @input.val().length
-    
+    @checkContent()
+
   setNewContent: (content)->
     @placeholder.html(content)
     @input.data("placeholder", content)
 
 # ============================================================PRIVATES==================================================
   ###
-  @private
-  ###
-  _wrap: ->
-    @wrapperDiv = $("<div class='#{@options.wrapperCss}'/>")
-    @input.wrapAll(@wrapperDiv)
-  ###
-  @private
+  #@private
   ###
   _createPlaceholder: ->
-    inputId = @input.attr("id") ? @_getRandomId()
+    inputId = @input.attr("id") ? _.uniqueId('Placeholder_')
     @input.attr("id",inputId)
     @_calculateMeasurements()
-    @placeholder =
-    $("<label class='#{@options.placeholderCss}' for='#{inputId}'>#{@input.attr("placeholder")}</label>")
+    @placeholder = $("<label class='#{@options.placeholderCss}' for='#{inputId}'>#{@input.attr("placeholder")}</label>")
     .css(
-      top: @_topOffset(),
-      left: @_leftOffset(),
+      top: @_topOffset()+'px',
+      left: @_leftOffset() + 'px',
       "line-height": @measurements.height + 'px',
-      width: @measurements.width,
-      height: @measurements.height)
+      width: @measurements.width + 'px',
+      height: @measurements.height + 'px'
+    )
     .click(=>
       @focus()
       $(@input).focus()
-      )
+    )
     .insertBefore(@input)
     @_removeHtmlPlaceholder()
 
   ###
-  @private
+  #@private
   ###
   _calculateMeasurements: ->
     @clone = @input.clone().insertBefore(@input).css(
@@ -96,57 +98,50 @@ class Placeholder
     ).show()
 
     @measurements or= {
-      width: @clone.css("width")
-      height: @clone.css("height")
+      width: @clone.css("width").replace('px','')
+      height: @clone.css("height").replace('px','')
       left: {
-        padding:parseInt(@clone.css("padding-left").replace("px",''), 10)
-        border:parseInt(@clone.css("border-left-width").replace("px",''), 10)
-        margin:parseInt(@clone.css("margin-left").replace("px",''), 10)
+        padding:parseInt(@clone.css("padding-left").replace("px",''))
+        border:parseInt(@clone.css("border-left-width").replace("px",''))
+        margin:parseInt(@clone.css("margin-left").replace("px",''))
       }
       top: {
-        padding:parseInt(@clone.css("padding-top").replace("px",''), 10)
-        border:parseInt(@clone.css("border-top-width").replace("px",''), 10)
-        margin:parseInt(@clone.css("margin-top").replace("px",''), 10)
+        padding:parseInt(@clone.css("padding-top").replace("px",''))
+        border:parseInt(@clone.css("border-top-width").replace("px",''))
+        margin:parseInt(@clone.css("margin-top").replace("px",''))
       }
     }
     @clone.remove()
     @measurements
-    
   ###
-  @private
-  ###
-  _getRandomId: ->
-    id = ""
-    id = "Placeholder_#{Math.floor(Math.random()*1000)}" while id.length == 0 || $("##{id}").length > 0
-    id
-  ###
-  @private
+  #@private
   ###
   _removeHtmlPlaceholder: ->
-    @input.data("placeholder",@input.attr("placeholder"))
-    @input.attr("placeholder","")
+    @input.data("placeholder", @input.attr("placeholder"))
+    @input.attr("placeholder", "")
+    @input.attr("autocomplete", "off")
   ###
-  @private
+  #@private
   ###
   _leftOffset: ->
     left = @measurements.left
     left.padding + left.border + left.margin + 2
   ###
-  @private
+  #@private
   ###
   _topOffset: ->
     top = @measurements.top
     top.padding + top.border + top.margin
 
   ###
-  @private
+  #@private
   ###
   _overrideDefVal: ->
     return if $.fn.val == @_newVal
     $.fn.rVal = $.fn.val
     $.fn.val = @_newVal
   ###
-  @private
+  #@private
   ###
   _newVal: (value) ->
     val = if value!=undefined then @rVal(value) else @rVal()
@@ -158,11 +153,6 @@ $.fn.placeholder = (options) ->
   initPlaceholder = (input)->
     placeholder = new Placeholder(input)
     input.data("placeholderInstance", placeholder)
-    input
-      .keyup(=>placeholder.keyup())
-      .blur(=>placeholder.blur())
-      .change(=>placeholder.keyup())
-      .focus(=>placeholder.focus())
 
   newContent = options
   input = @[0]
